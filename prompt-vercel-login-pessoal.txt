@@ -1,0 +1,10 @@
+Preciso de um passo a passo simples (Windows, PowerShell) para criar/logar em uma conta PESSOAL da Vercel, separada da minha conta corporativa.
+
+Contexto:
+- Já tenho a Vercel CLI instalada e já usei "vercel login" antes, mas caiu numa conta corporativa gerenciada (Enterprise/SSO) da minha empresa (chamada "Kryptus"), que não tem espaço de conta pessoal — todo projeto fica preso ao time da empresa e vem com "Deployment Protection" (login obrigatório) ativado, que eu não posso nem quero desativar (é política da empresa).
+- Já rodei "vercel logout" para sair dessa sessão corporativa.
+- Quero logar de novo, agora com uma conta 100% pessoal (Hobby, gratuita), usando um e-mail pessoal meu (não o corporativo @kryptus.com) — para poder hospedar um projeto pessoal (um app React/Vite) com uma URL pública limpa, sem exigir login de quem for acessar.
+- Não quero mexer no GitHub: meu repositório já está criado e funcionando numa conta pessoal do GitHub, isso não precisa mudar.
+- Depois de logado na conta pessoal da Vercel, também preciso saber como: (1) rodar "vercel link" para criar um projeto novo do zero (sem herdar nada da conta antiga), (2) adicionar uma variável de ambiente secreta chamada ANTHROPIC_API_KEY ao projeto via CLI, e (3) fazer o deploy de produção com "vercel --prod" e, se possível, escolher um alias/URL final mais bonito (tipo taskflow-algumacoisa.vercel.app) via "vercel alias set".
+
+Me dê o passo a passo completo, numerado, incluindo os comandos exatos de terminal, avisando em quais passos vou precisar confirmar algo manualmente (ex: clicar em um link enviado por e-mail, escolher opções no navegador).
