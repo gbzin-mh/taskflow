@@ -71,7 +71,18 @@ export const useStore = create<AppStore>((set, get) => ({
         const p = JSON.parse(raw) as { tasks?: Task[]; goals?: Goal[] };
         const tasks: Task[] = (p.tasks ?? []).map(t => ({ ...t, tags: t.tags ?? [] }));
         const goals: Goal[] = p.goals ?? [];
-        if (tasks.length || goals.length) { set({ tasks, goals }); return; }
+        // Detect previously persisted demo/seed data and avoid loading it for new visitors.
+        const demoTaskTitles = ['Estudar WCAG 2.1', 'Criar protótipo do app'];
+        const demoGoalTitles = ['Completar PDI semestral', 'Aprender acessibilidade web'];
+        const isDemoTasks = tasks.length > 0 && tasks.every(t => demoTaskTitles.includes(t.title));
+        const isDemoGoals = goals.length > 0 && goals.every(g => demoGoalTitles.includes(g.title));
+
+        let loadTasks = tasks;
+        let loadGoals = goals;
+        if (isDemoTasks) loadTasks = [];
+        if (isDemoGoals) loadGoals = [];
+
+        if (loadTasks.length || loadGoals.length) { set({ tasks: loadTasks, goals: loadGoals }); return; }
       }
     } catch {}
     set({ tasks: EMPTY_TASKS, goals: EMPTY_GOALS });
