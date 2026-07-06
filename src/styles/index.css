@@ -191,43 +191,6 @@ html,body{width:100%;height:100%}
 .flag-medium{color:var(--warn)}
 .flag-low{color:var(--text3)}
 
-/* ── Agent chat ──────────────────────────────────────────────────────────────── */
-.agent-container{display:flex;flex-direction:column;flex:1;overflow:hidden;background:var(--bg)}
-.agent-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.agent-messages{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-.agent-welcome{margin:auto;text-align:center;padding:32px 20px;display:flex;flex-direction:column;align-items:center}
-.agent-suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;max-width:480px}
-.agent-suggestion{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:left}
-.agent-suggestion:hover{border-color:var(--accent);color:var(--accent-text);background:var(--accent-bg)}
-.agent-msg-row{display:flex;align-items:flex-start;gap:10px;max-width:800px;width:100%}
-.agent-msg-row.user-row{flex-direction:row-reverse;align-self:flex-end;margin-left:auto}
-.agent-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
-.assistant-avatar{background:var(--accent-bg);color:var(--accent)}
-.user-avatar{background:var(--surface2);color:var(--text2)}
-.agent-bubble{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.65;word-break:break-word}
-.assistant-bubble{background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 2px;max-width:72%}
-.user-bubble{background:var(--accent);color:#fff;border-radius:12px 12px 2px 12px;max-width:68%}
-.agent-typing{display:flex;gap:4px;align-items:center;padding:2px 0;height:20px}
-.agent-typing span{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:agent-bounce 1.2s infinite}
-.agent-typing span:nth-child(2){animation-delay:.2s}
-.agent-typing span:nth-child(3){animation-delay:.4s}
-@keyframes agent-bounce{0%,80%,100%{transform:scale(.75);opacity:.4}40%{transform:scale(1.1);opacity:1}}
-.agent-action-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:10px}
-.action-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
-.action-card-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text)}
-.action-card-label i{color:var(--accent);font-size:14px}
-.action-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.action-badge.executed{background:var(--success-bg);color:var(--success)}
-.action-badge.ignored{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
-.action-details{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12px;margin-bottom:10px;align-items:baseline}
-.action-detail-key{color:var(--text3);white-space:nowrap}
-.action-detail-val{color:var(--text);font-weight:500}
-.action-card-btns{display:flex;gap:6px;margin-top:4px}
-.agent-input-area{display:flex;align-items:flex-end;gap:8px;padding:12px 24px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.agent-textarea{flex:1;resize:none;min-height:40px;max-height:120px;overflow-y:auto;border-radius:var(--radius);padding:9px 12px;font-size:14px;line-height:1.5;width:auto}
-.agent-send-btn{width:40px;height:40px;padding:0;justify-content:center;flex-shrink:0;border-radius:var(--radius)}
-.agent-setup{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 24px;text-align:center}
-
 /* Responsive */
 @media(max-width:700px){
   .sidebar{width:56px;padding:8px 0}
@@ -235,10 +198,6 @@ html,body{width:100%;height:100%}
   .sidebar>div:last-child{display:none}
   .nav-item{padding:10px;justify-content:center;width:40px;margin:2px auto}
   .kanban{grid-template-columns:repeat(2,1fr)}
-  .agent-header{padding:12px 16px}
-  .agent-messages{padding:14px 16px}
-  .agent-input-area{padding:10px 16px 14px}
-  .assistant-bubble,.user-bubble{max-width:88%}
 }
 @media(max-width:500px){
   .kanban{grid-template-columns:1fr}

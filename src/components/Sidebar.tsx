@@ -2,14 +2,13 @@ import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Sidebar() {
-  const { tasks, goals, agentMessages, openTaskModal } = useStore();
+  const { tasks, goals, openTaskModal } = useStore();
 
   const activeTasks  = tasks.filter(t => t.status !== 'done' && t.status !== 'cancelled').length;
   const overdueTasks = tasks.filter(t =>
     t.due && t.status !== 'done' && t.status !== 'cancelled' &&
     new Date(t.due + 'T00:00:00') < new Date()
   ).length;
-  const agentMsgCount = agentMessages.filter(m => m.role === 'user').length;
 
   return (
     <nav className="sidebar" aria-label="Navegação principal">
@@ -59,16 +58,6 @@ export default function Sidebar() {
         <span>Metas</span>
         {goals.length > 0 && (
           <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>{goals.length}</span>
-        )}
-      </NavLink>
-
-      <span className="nav-section" aria-hidden="true">Assistente</span>
-
-      <NavLink to="/agent" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')} title="Assistente IA">
-        <i className="ti ti-sparkles" aria-hidden="true" />
-        <span>Assistente IA</span>
-        {agentMsgCount > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>{agentMsgCount}</span>
         )}
       </NavLink>
 

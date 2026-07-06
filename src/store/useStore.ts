@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Task, Goal, AgentMessage, ActionState, ModalType } from '../types';
+import type { Task, Goal, ModalType } from '../types';
 
 const STORAGE_KEY = 'taskflow_v3';
 
@@ -35,10 +35,6 @@ interface AppStore {
   calYear: number;
   collapsedGroups: Record<string, boolean>;
 
-  // ── Agent ────────────────────────────────────────────────────────────────────
-  agentMessages: AgentMessage[];
-  agentLoading: boolean;
-
   // ── Actions ──────────────────────────────────────────────────────────────────
   loadState: () => void;
 
@@ -60,11 +56,6 @@ interface AppStore {
   toggleGroup: (status: string) => void;
   setCalMonth: (month: number) => void;
   setCalYear: (year: number) => void;
-
-  pushAgentMessage: (msg: AgentMessage) => void;
-  setAgentLoading: (loading: boolean) => void;
-  clearAgentMessages: () => void;
-  resolveAgentAction: (msgId: number, actionIdx: number, newState: ActionState) => void;
 }
 
 export const useStore = create<AppStore>((set, get) => ({
@@ -79,8 +70,6 @@ export const useStore = create<AppStore>((set, get) => ({
   calMonth: new Date().getMonth(),
   calYear: new Date().getFullYear(),
   collapsedGroups: {},
-  agentMessages: [],
-  agentLoading: false,
 
   loadState() {
     try {
@@ -159,18 +148,4 @@ export const useStore = create<AppStore>((set, get) => ({
   },
   setCalMonth(month) { set({ calMonth: month }); },
   setCalYear(year)   { set({ calYear: year }); },
-
-  // ── Agent ──────────────────────────────────────────────────────────────────
-  pushAgentMessage(msg) { set({ agentMessages: [...get().agentMessages, msg] }); },
-  setAgentLoading(loading) { set({ agentLoading: loading }); },
-  clearAgentMessages() { set({ agentMessages: [] }); },
-  resolveAgentAction(msgId, actionIdx, newState) {
-    const agentMessages = get().agentMessages.map(m => {
-      if (m.id !== msgId) return m;
-      const actionStates = [...(m.actionStates ?? [])];
-      actionStates[actionIdx] = newState;
-      return { ...m, actionStates };
-    });
-    set({ agentMessages });
-  },
 }));
