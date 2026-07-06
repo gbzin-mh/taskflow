@@ -7,15 +7,8 @@ function persist(tasks: Task[], goals: Goal[]) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ tasks, goals })); } catch {}
 }
 
-const DEFAULT_TASKS: Task[] = [
-  { id: 1, title: 'Estudar WCAG 2.1',      status: 'todo', priority: 'medium', due: '', desc: 'Ler documentação oficial e praticar', tags: ['estudo', 'a11y']  },
-  { id: 2, title: 'Criar protótipo do app', status: 'todo', priority: 'high',   due: '', desc: 'Wireframes e fluxo de navegação',    tags: ['design', 'ux'] },
-];
-
-const DEFAULT_GOALS: Goal[] = [
-  { id: 1, title: 'Completar PDI semestral',     progress: 0, desc: 'Todas as entregas do semestre' },
-  { id: 2, title: 'Aprender acessibilidade web', progress: 0, desc: 'Cursos e prática' },
-];
+const EMPTY_TASKS: Task[] = [];
+const EMPTY_GOALS: Goal[] = [];
 
 interface AppStore {
   // ── Data ────────────────────────────────────────────────────────────────────
@@ -81,7 +74,7 @@ export const useStore = create<AppStore>((set, get) => ({
         if (tasks.length || goals.length) { set({ tasks, goals }); return; }
       }
     } catch {}
-    set({ tasks: DEFAULT_TASKS, goals: DEFAULT_GOALS });
+    set({ tasks: EMPTY_TASKS, goals: EMPTY_GOALS });
   },
 
   // ── Tasks ──────────────────────────────────────────────────────────────────
