@@ -82,6 +82,13 @@ export const useStore = create<AppStore>((set, get) => ({
         if (isDemoTasks) loadTasks = [];
         if (isDemoGoals) loadGoals = [];
 
+        // If we detected only demo data, clear it and persist the empty state
+        if ((isDemoTasks || isDemoGoals)) {
+          set({ tasks: loadTasks, goals: loadGoals });
+          try { persist(loadTasks, loadGoals); } catch {}
+          return;
+        }
+
         if (loadTasks.length || loadGoals.length) { set({ tasks: loadTasks, goals: loadGoals }); return; }
       }
     } catch {}
