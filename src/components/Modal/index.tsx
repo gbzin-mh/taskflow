@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 import TaskModal from './TaskModal';
 import GoalModal from './GoalModal';
+import SpaceModal from './SpaceModal';
+import ListModal from './ListModal';
 
 export default function Modal() {
   const { modal, closeModal } = useStore();
@@ -41,6 +43,8 @@ export default function Modal() {
     >
       {modal === 'task' && <TaskModal />}
       {modal === 'goal' && <GoalModal />}
+      {modal === 'space' && <SpaceModal />}
+      {modal === 'list' && <ListModal />}
     </div>
   );
 }

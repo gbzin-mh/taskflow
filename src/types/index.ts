@@ -1,6 +1,6 @@
 export type Status   = 'todo' | 'doing' | 'review' | 'done' | 'cancelled';
 export type Priority = 'low' | 'medium' | 'high';
-export type ModalType   = 'task' | 'goal' | null;
+export type ModalType   = 'task' | 'goal' | 'space' | 'list' | null;
 export type View = 'dashboard' | 'tasks' | 'kanban' | 'calendar' | 'goals';
 
 export interface Task {

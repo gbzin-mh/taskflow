@@ -24,6 +24,9 @@ interface AppStore {
   taskToEdit: Task | null;
   taskPrefill: Partial<Task>;
   goalToEdit: Goal | null;
+  spaceToEdit: Space | null;
+  listToEdit: List | null;
+  listSpaceId: number | null;
 
   // ── UI ──────────────────────────────────────────────────────────────────────
   toast: string | null;
@@ -57,6 +60,8 @@ interface AppStore {
 
   openTaskModal: (task?: Task | null, prefill?: Partial<Task>) => void;
   openGoalModal: (goal?: Goal | null) => void;
+  openSpaceModal: (space?: Space | null) => void;
+  openListModal: (spaceId: number, list?: List | null) => void;
   closeModal: () => void;
 
   showToast: (msg: string) => void;
@@ -74,6 +79,9 @@ export const useStore = create<AppStore>((set, get) => ({
   taskToEdit: null,
   taskPrefill: {},
   goalToEdit: null,
+  spaceToEdit: null,
+  listToEdit: null,
+  listSpaceId: null,
   toast: null,
   _toastTimer: null,
   calMonth: new Date().getMonth(),
@@ -200,8 +208,14 @@ export const useStore = create<AppStore>((set, get) => ({
   openGoalModal(goal = null) {
     set({ modal: 'goal', goalToEdit: goal });
   },
+  openSpaceModal(space = null) {
+    set({ modal: 'space', spaceToEdit: space });
+  },
+  openListModal(spaceId, list = null) {
+    set({ modal: 'list', listSpaceId: spaceId, listToEdit: list });
+  },
   closeModal() {
-    set({ modal: null, taskToEdit: null, taskPrefill: {}, goalToEdit: null });
+    set({ modal: null, taskToEdit: null, taskPrefill: {}, goalToEdit: null, spaceToEdit: null, listToEdit: null, listSpaceId: null });
   },
 
   // ── UI ──────────────────────────────────────────────────────────────────────
