@@ -5,6 +5,8 @@ import type { Status, Priority } from '../../types';
 
 export default function TaskModal() {
   const { taskToEdit, taskPrefill, closeModal, createTask, updateTask, showToast } = useStore();
+  const lists = useStore(s => s.lists);
+  const spaces = useStore(s => s.spaces);
 
   const [title,    setTitle]    = useState(taskToEdit?.title    ?? '');
   const [status,   setStatus]   = useState<Status>(taskToEdit?.status   ?? (taskPrefill.status   ?? 'todo'));
@@ -12,6 +14,7 @@ export default function TaskModal() {
   const [due,      setDue]      = useState(taskToEdit?.due      ?? (taskPrefill.due  ?? ''));
   const [desc,     setDesc]     = useState(taskToEdit?.desc     ?? (taskPrefill.desc ?? ''));
   const [tagInput, setTagInput] = useState((taskToEdit?.tags ?? taskPrefill.tags ?? []).join(', '));
+  const [listId,   setListId]   = useState(taskToEdit?.listId != null ? String(taskToEdit.listId) : '');
 
   const tags = tagInput.split(',').map(s => s.trim()).filter(Boolean);
 
@@ -21,7 +24,7 @@ export default function TaskModal() {
 
   function save() {
     if (!title.trim()) { alert('O título é obrigatório.'); return; }
-    const data = { title: title.trim(), status, priority, due, desc, tags };
+    const data = { title: title.trim(), status, priority, due, desc, tags, listId: listId ? Number(listId) : undefined };
     if (taskToEdit) {
       updateTask(taskToEdit.id, data);
       showToast('Tarefa atualizada!');
@@ -89,6 +92,20 @@ export default function TaskModal() {
             onChange={e => setTagInput(e.target.value)}
           />
         </div>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="task-list">Lista</label>
+        <select id="task-list" value={listId} onChange={e => setListId(e.target.value)}>
+          <option value="">Nenhuma</option>
+          {spaces.map(space => (
+            <optgroup key={space.id} label={space.name}>
+              {lists.filter(list => list.spaceId === space.id).map(list => (
+                <option key={list.id} value={list.id}>{list.name}</option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
       </div>
 
       {tags.length > 0 && (
