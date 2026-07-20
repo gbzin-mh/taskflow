@@ -12,6 +12,8 @@ export interface Task {
   desc: string;
   tags: string[];
   createdAt?: string;
+  spaceId?: number;
+  listId?: number;
 }
 
 export interface Goal {
@@ -20,5 +22,20 @@ export interface Goal {
   desc: string;
   progress: number;
   target?: string;
+}
+
+export interface Space {
+  id: number;
+  name: string;
+  icon: string;
+  color: string;
+}
+
+export interface List {
+  id: number;
+  spaceId: number;
+  name: string;
+  icon: string;
+  color: string;
 }
 
