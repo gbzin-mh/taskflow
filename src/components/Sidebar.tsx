@@ -1,8 +1,23 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Sidebar() {
   const { tasks, goals, openTaskModal } = useStore();
+  const spaces = useStore(s => s.spaces);
+  const lists = useStore(s => s.lists);
+  const store = useStore() as any;
+
+  const [expandedSpaces, setExpandedSpaces] = useState<Set<number>>(new Set());
+
+  const toggleSpace = (id: number) => {
+    setExpandedSpaces(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const activeTasks  = tasks.filter(t => t.status !== 'done' && t.status !== 'cancelled').length;
   const overdueTasks = tasks.filter(t =>
@@ -60,6 +75,75 @@ export default function Sidebar() {
           <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>{goals.length}</span>
         )}
       </NavLink>
+
+      <div className="nav-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12 }}>
+        <span aria-hidden="true">Espaços</span>
+        <button
+          className="btn-icon"
+          onClick={() => store.openSpaceModal?.()}
+          title="Criar novo espaço"
+          aria-label="Criar novo espaço"
+        >
+          <i className="ti ti-plus" aria-hidden="true" />
+        </button>
+      </div>
+
+      {spaces.map(space => {
+        const isExpanded = expandedSpaces.has(space.id);
+        const spaceLists = lists.filter(l => l.spaceId === space.id);
+
+        return (
+          <div key={space.id}>
+            <button
+              className="nav-item"
+              style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => toggleSpace(space.id)}
+              title={space.name}
+            >
+              <span style={{ width: 14, height: 14, borderRadius: 4, background: space.color, flexShrink: 0 }} aria-hidden="true" />
+              <i className={space.icon} aria-hidden="true" />
+              <span>{space.name}</span>
+              <i
+                className={'ti ' + (isExpanded ? 'ti-chevron-down' : 'ti-chevron-right')}
+                style={{ marginLeft: 'auto' }}
+                aria-hidden="true"
+              />
+            </button>
+
+            {isExpanded && (
+              <div style={{ paddingLeft: 20 }}>
+                {spaceLists.map(list => {
+                  const listTaskCount = tasks.filter(t => t.listId === list.id).length;
+                  return (
+                    <NavLink
+                      key={list.id}
+                      to={`/tasks?listId=${list.id}`}
+                      className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}
+                      title={list.name}
+                    >
+                      <i className={list.icon} aria-hidden="true" />
+                      <span>{list.name}</span>
+                      {listTaskCount > 0 && (
+                        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>{listTaskCount}</span>
+                      )}
+                    </NavLink>
+                  );
+                })}
+
+                <button
+                  className="nav-item"
+                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)' }}
+                  onClick={() => store.openListModal?.(space.id)}
+                  title="Criar nova lista"
+                >
+                  <i className="ti ti-plus" aria-hidden="true" />
+                  <span>Nova lista</span>
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       <div style={{ flex: 1 }} />
 
