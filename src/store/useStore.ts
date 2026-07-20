@@ -9,8 +9,16 @@ function persist(tasks: Task[], goals: Goal[], spaces: Space[], lists: List[]) {
 
 const EMPTY_TASKS: Task[] = [];
 const EMPTY_GOALS: Goal[] = [];
-const EMPTY_SPACES: Space[] = [];
-const EMPTY_LISTS: List[] = [];
+
+const SEED_SPACE_ID = 1;
+const SEED_SPACES: Space[] = [
+  { id: SEED_SPACE_ID, name: 'TI', icon: 'ti ti-device-laptop', color: '#0ea5e9' },
+];
+const SEED_LISTS: List[] = [
+  { id: 2, spaceId: SEED_SPACE_ID, name: 'Infra Tasks', icon: 'ti ti-server', color: '#0ea5e9' },
+  { id: 3, spaceId: SEED_SPACE_ID, name: 'Sec Tasks', icon: 'ti ti-shield-lock', color: '#0ea5e9' },
+  { id: 4, spaceId: SEED_SPACE_ID, name: 'Cloud Tasks', icon: 'ti ti-cloud', color: '#0ea5e9' },
+];
 
 interface AppStore {
   // ── Data ────────────────────────────────────────────────────────────────────
@@ -108,17 +116,23 @@ export const useStore = create<AppStore>((set, get) => ({
         if (isDemoTasks) loadTasks = [];
         if (isDemoGoals) loadGoals = [];
 
-        // If we detected only demo data, clear it and persist the empty state
-        if ((isDemoTasks || isDemoGoals)) {
-          set({ tasks: loadTasks, goals: loadGoals, spaces, lists });
-          try { persist(loadTasks, loadGoals, spaces, lists); } catch {}
+        // First time: no spaces/lists saved yet — seed the default "TI" space (don't touch real user data if it already exists).
+        const isFirstVisitSpaces = spaces.length === 0 && lists.length === 0;
+        const loadSpaces = isFirstVisitSpaces ? SEED_SPACES : spaces;
+        const loadLists = isFirstVisitSpaces ? SEED_LISTS : lists;
+
+        // If we detected only demo data or seeded spaces, persist the corrected state.
+        if (isDemoTasks || isDemoGoals || isFirstVisitSpaces) {
+          set({ tasks: loadTasks, goals: loadGoals, spaces: loadSpaces, lists: loadLists });
+          try { persist(loadTasks, loadGoals, loadSpaces, loadLists); } catch {}
           return;
         }
 
-        if (loadTasks.length || loadGoals.length || spaces.length || lists.length) { set({ tasks: loadTasks, goals: loadGoals, spaces, lists }); return; }
+        if (loadTasks.length || loadGoals.length || loadSpaces.length || loadLists.length) { set({ tasks: loadTasks, goals: loadGoals, spaces: loadSpaces, lists: loadLists }); return; }
       }
     } catch {}
-    set({ tasks: EMPTY_TASKS, goals: EMPTY_GOALS, spaces: EMPTY_SPACES, lists: EMPTY_LISTS });
+    set({ tasks: EMPTY_TASKS, goals: EMPTY_GOALS, spaces: SEED_SPACES, lists: SEED_LISTS });
+    try { persist(EMPTY_TASKS, EMPTY_GOALS, SEED_SPACES, SEED_LISTS); } catch {}
   },
 
   // ── Tasks ──────────────────────────────────────────────────────────────────
