@@ -175,9 +175,12 @@ export const useStore = create<AppStore>((set, get) => ({
     persist(get().tasks, get().goals, spaces, get().lists);
   },
   deleteSpace(id) {
+    const removedListIds = new Set(get().lists.filter(l => l.spaceId === id).map(l => l.id));
     const spaces = get().spaces.filter(s => s.id !== id);
-    set({ spaces });
-    persist(get().tasks, get().goals, spaces, get().lists);
+    const lists = get().lists.filter(l => l.spaceId !== id);
+    const tasks = get().tasks.filter(t => t.listId == null || !removedListIds.has(t.listId));
+    set({ spaces, lists, tasks });
+    persist(tasks, get().goals, spaces, lists);
   },
   getSpaceById(id) { return get().spaces.find(s => s.id === id); },
 

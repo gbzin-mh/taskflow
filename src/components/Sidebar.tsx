@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Sidebar() {
@@ -7,6 +7,9 @@ export default function Sidebar() {
   const spaces = useStore(s => s.spaces);
   const lists = useStore(s => s.lists);
   const store = useStore() as any;
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const activeListId = searchParams.get('list');
 
   const [expandedSpaces, setExpandedSpaces] = useState<Set<number>>(new Set());
 
@@ -17,6 +20,16 @@ export default function Sidebar() {
       else next.add(id);
       return next;
     });
+  };
+
+  const handleDeleteSpace = (space: { id: number; name: string }) => {
+    const listCount = lists.filter(l => l.spaceId === space.id).length;
+    const warning = listCount > 0
+      ? `Excluir o espaço "${space.name}"? Isso também excluirá ${listCount} lista(s) e todas as tarefas associadas a elas.`
+      : `Excluir o espaço "${space.name}"?`;
+    if (window.confirm(warning)) {
+      store.deleteSpace?.(space.id);
+    }
   };
 
   const activeTasks  = tasks.filter(t => t.status !== 'done' && t.status !== 'cancelled').length;
@@ -94,31 +107,44 @@ export default function Sidebar() {
 
         return (
           <div key={space.id}>
-            <button
-              className="nav-item"
-              style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
-              onClick={() => toggleSpace(space.id)}
-              title={space.name}
-            >
-              <span style={{ width: 14, height: 14, borderRadius: 4, background: space.color, flexShrink: 0 }} aria-hidden="true" />
-              <i className={space.icon} aria-hidden="true" />
-              <span>{space.name}</span>
-              <i
-                className={'ti ' + (isExpanded ? 'ti-chevron-down' : 'ti-chevron-right')}
-                style={{ marginLeft: 'auto' }}
-                aria-hidden="true"
-              />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <button
+                className="nav-item"
+                style={{ flex: 1, minWidth: 0, background: 'none', border: 'none', cursor: 'pointer' }}
+                onClick={() => toggleSpace(space.id)}
+                title={space.name}
+              >
+                <span style={{ width: 14, height: 14, borderRadius: 4, background: space.color, flexShrink: 0 }} aria-hidden="true" />
+                <i className={space.icon} aria-hidden="true" />
+                <span>{space.name}</span>
+                <i
+                  className={'ti ' + (isExpanded ? 'ti-chevron-down' : 'ti-chevron-right')}
+                  style={{ marginLeft: 'auto' }}
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                className="btn-icon"
+                style={{ marginRight: 8, flexShrink: 0 }}
+                onClick={() => handleDeleteSpace(space)}
+                title={`Excluir espaço "${space.name}"`}
+                aria-label={`Excluir espaço ${space.name}`}
+              >
+                <i className="ti ti-trash" aria-hidden="true" />
+              </button>
+            </div>
 
             {isExpanded && (
               <div style={{ paddingLeft: 20 }}>
                 {spaceLists.map(list => {
                   const listTaskCount = tasks.filter(t => t.listId === list.id).length;
+                  const isActive = activeListId === String(list.id);
                   return (
-                    <NavLink
+                    <button
                       key={list.id}
-                      to={`/tasks?listId=${list.id}`}
-                      className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}
+                      className={'nav-item' + (isActive ? ' active' : '')}
+                      style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                      onClick={() => navigate(`/tasks?list=${list.id}`)}
                       title={list.name}
                     >
                       <i className={list.icon} aria-hidden="true" />
@@ -126,7 +152,7 @@ export default function Sidebar() {
                       {listTaskCount > 0 && (
                         <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>{listTaskCount}</span>
                       )}
-                    </NavLink>
+                    </button>
                   );
                 })}
 

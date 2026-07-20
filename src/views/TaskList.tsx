@@ -1,4 +1,5 @@
 import { useStore } from '../store/useStore';
+import { useSearchParams } from 'react-router-dom';
 import ViewTabs from '../components/ViewTabs';
 import TaskRow from '../components/TaskRow';
 import { statusLabel } from '../utils/helpers';
@@ -8,11 +9,36 @@ const GROUP_ORDER: Status[] = ['todo', 'doing', 'review', 'done', 'cancelled'];
 
 export default function TaskList() {
   const { tasks, openTaskModal, toggleGroup, collapsedGroups } = useStore();
+  const lists = useStore(s => s.lists);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const listParam = searchParams.get('list');
+  const activeList = listParam ? lists.find(l => l.id === Number(listParam)) : undefined;
+  const visibleTasks = activeList ? tasks.filter(t => t.listId === activeList.id) : tasks;
+
+  const clearFilter = () => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('list');
+      return next;
+    });
+  };
 
   return (
     <>
       <div className="page-header">
-        <h2 className="page-title">Tarefas</h2>
+        <div>
+          <h2 className="page-title">Tarefas</h2>
+          {activeList && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, fontSize: 13, color: 'var(--text3)' }}>
+              <i className={activeList.icon} aria-hidden="true" />
+              <span>{activeList.name}</span>
+              <button className="btn btn-ghost" style={{ fontSize: 12, padding: '2px 8px' }} onClick={clearFilter}>
+                Limpar filtro
+              </button>
+            </div>
+          )}
+        </div>
         <button className="btn btn-primary" onClick={() => openTaskModal()} aria-label="Criar nova tarefa">
           <i className="ti ti-plus" aria-hidden="true" />Nova tarefa
         </button>
@@ -20,7 +46,7 @@ export default function TaskList() {
 
       <ViewTabs />
 
-      {!tasks.length ? (
+      {!visibleTasks.length ? (
         <div className="empty">
           <i className="ti ti-clipboard-list" aria-hidden="true" />
           <p>Nenhuma tarefa ainda. Crie a primeira!</p>
@@ -37,7 +63,7 @@ export default function TaskList() {
           </div>
 
           {GROUP_ORDER.map(status => {
-            const group = tasks.filter(t => t.status === status);
+            const group = visibleTasks.filter(t => t.status === status);
             const collapsed = !!collapsedGroups[status];
             return (
               <div key={status} className="task-group">
